@@ -14,18 +14,24 @@ builder.Services.AddDbContext<DataContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 }
 );
+builder.Services.AddCors(options => options.AddPolicy("AllowAccess_TO_API",
+                policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-app.UseHttpsRedirection();
+app.UseCors("AllowAccess_TO_API");
+//app.UseCors(builder => builder
+//    .AllowAnyOrigin()
+//    .AllowAnyHeader()
+ //   .AllowAnyMethod());
+    //.WithOrigins("http://localhost:4200")
 
-app.UseAuthorization();
+//app.UseHttpsRedirection();
 
 app.MapControllers();
 
